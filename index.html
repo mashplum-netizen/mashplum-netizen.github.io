@@ -1,39 +1,63 @@
+```html
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="utf-8">
     <title>Mashplum Netizen</title>
-
-    <meta name="description" content="Personal image gallery">
-    <meta name="author" content="Mashplum Netizen">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-    <meta name="theme-color" content="#2e3033">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://mashplum-netizen.github.io/">
-    <meta name="twitter:title" content="Mashplum Netizen">
-    <meta name="twitter:description" content="Personal image gallery">
-    <meta name="twitter:image" content="https://mashplum-netizen.github.io/positivity_party.csv">
-
-    <meta property="og:title" content="Mashplum Netizen">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://mashplum-netizen.github.io/">
-    <meta property="og:image" content="https://mashplum-netizen.github.io/positivity_party.csv">
-    <meta property="og:description" content="Personal image gallery">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
 
-<header>
-    <h1>Mashplum Netizen</h1>
-</header>
+<h1>Mashplum Netizen</h1>
 
-<main>
-    <div>
-        <img src="positivity_party.csv" alt="Helen">
-    </div>
-</main>
+<h2>Images</h2>
+<div id="images"></div>
+
+<h2>Files</h2>
+<div id="files"></div>
+
+<script>
+const repo = "mashplum-netizen/mashplum-netizen.github.io";
+
+async function showFolder(folder, imageTypes = false) {
+    const response = await fetch(
+        `https://api.github.com/repos/${repo}/contents/${folder}`
+    );
+
+    const files = await response.json();
+
+    files.forEach(file => {
+        const link = document.createElement("a");
+        link.href = file.download_url;
+        link.textContent = file.name;
+        link.target = "_blank";
+
+        if (imageTypes && /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name)) {
+            const image = document.createElement("img");
+            image.src = file.download_url;
+            image.alt = file.name;
+            image.style.maxWidth = "500px";
+            image.style.display = "block";
+            image.style.marginBottom = "10px";
+
+            const label = document.createElement("p");
+            label.appendChild(link);
+
+            document.getElementById("images").appendChild(image);
+            document.getElementById("images").appendChild(label);
+        } else {
+            const paragraph = document.createElement("p");
+            paragraph.appendChild(link);
+            document.getElementById("files").appendChild(paragraph);
+        }
+    });
+}
+
+showFolder("images", true);
+showFolder("");
+</script>
 
 </body>
 </html>
+```
